@@ -94,44 +94,45 @@ function boardMap() {
 }
 
 
-// Show how the board looks with values in them.
-function showBoardToUser(snapShotValFromInitaiteBoard){
+// Show how the board looks with values in them. 
+// 'snapshot' is the array value from initiateGameBoard
+function showBoardToUser(snapshot){
     
     // Get the value of each cell on the board
     function cellValue(indexVal){
-    if (snapShotValFromInitaiteBoard[indexVal] == null){
+    if (snapshot[indexVal] === null){
         return String(indexVal + 1)
     }
     else{
-        return snapShotValFromInitaiteBoard[indexVal];
+        return snapshot[indexVal];
     }
 }
 
     // How each row on the board should look
-function eachRow(rowNum){
-    
-    // Example: if the rowNum = 1, the left, middle and right gives 3, 4, 5
+    function eachRow(rowNum){
+        
+        // Example: if the rowNum = 1, the left, middle and right gives 3, 4, 5
 
-    //For any given rowNum, the left column Index number of that row is:
-    const leftColIndex = 3 * rowNum;
+        //For any given rowNum, the left column Index number of that row is:
+        const leftColIndex = 3 * rowNum;
 
-    //For any given rowNum, the middle column Index number of that row is:
-    const middleColIndex = (3 * rowNum) + 1;
+        //For any given rowNum, the middle column Index number of that row is:
+        const middleColIndex = (3 * rowNum) + 1;
 
-     //For any given rowNum, the right column Index number of that row is:
-    const rightColIndex = (3 * rowNum) + 2
+        //For any given rowNum, the right column Index number of that row is:
+        const rightColIndex = (3 * rowNum) + 2
 
 
-    // Combining cellValue with ColIndex, gives the actual value of each cell.
-    const actualLeftCellValue = cellValue(leftColIndex);
-    const actualMiddleCellValue = cellValue(middleColIndex);
-    const actualRightCellValue = cellValue(rightColIndex);
+        // Combining cellValue with ColIndex, gives the actual value of each cell.
+        const actualLeftCellValue = cellValue(leftColIndex);
+        const actualMiddleCellValue = cellValue(middleColIndex);
+        const actualRightCellValue = cellValue(rightColIndex);
 
-    const printLine = `${actualLeftCellValue} | ${actualMiddleCellValue} | ${actualRightCellValue}`;
+        const printLine = `${actualLeftCellValue} | ${actualMiddleCellValue} | ${actualRightCellValue}`;
 
-    return printLine;
+        return printLine;
 
-}
+    }
 
 console.log(eachRow(0));
 console.log("---+---+---");
@@ -140,6 +141,55 @@ console.log("---+---+---");
 console.log(eachRow(2));
 
 }
+
+
+//Determines who wins the game
+function gameResult(snapshot){    
+
+    //Check rows for same value
+    const rows = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+    ];
+
+    function checkRows (snapshot) {
+        for (const[a,b,c] of rows){
+            const valueOfA = snapshot[a];
+            const valueOfB = snapshot[b];
+            const valueOfC = snapshot[c];
+
+            if (valueOfA !== null && valueOfA === valueOfB && valueOfB === valueOfC){
+                return{
+                    ok: true,
+                    winner: valueOfA,
+                    line: [a , b, c]
+                };
+            }
+            return{
+                ok: false;
+            }
+        }
+    }
+
+    //Check columns for the same value
+    //if column 1 shows 'X' in each cell, 'X' wins. Otherwise check column 2 then check column 3
+    // Do the same for 'O'
+
+
+    //Check Diagonals
+    // if snapshot[0], snapshot[4], snapshot[8] all have X or all have O, call the winner
+    //if snapshot[2], snapshot[4], snapshot[6] all have X or all have O, call the winner
+
+    //Check if it is a draw
+    //if each cell is occupied, that is if each cell is not null, and rows, columns, and diagonals yield no results then it's a draw
+}
+
+
+
+
+
+
 
 
 
