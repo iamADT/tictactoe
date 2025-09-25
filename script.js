@@ -12,7 +12,7 @@ const initiateGameBoard = (() => {
     const boardSize = 9;
     const cells = Array(boardSize).fill(null);
     
-    //Snapshot of the board
+    //Current snapshot of the board
     function getBoardSnapshot () {
         return cells.slice()
     };
@@ -95,10 +95,11 @@ function boardMap() {
 
 
 // Show how the board looks with values in them. 
-// 'snapshot' is the array value from initiateGameBoard
+// 'snapshot' is the snapshot array value from initiateGameBoard
 function showBoardToUser(snapshot){
     
-    // Get the value of each cell on the board
+    // Get the value of each cell on the board.
+    //Even though indexes start at 0, adding 1 for the user's sake
     function cellValue(indexVal){
     if (snapshot[indexVal] === null){
         return String(indexVal + 1)
@@ -143,22 +144,53 @@ console.log(eachRow(2));
 }
 
 
-//Determines who wins the game
-function gameResult(snapshot){    
+//A function that determines who wins the game
+function gameResult(snapshot){
+    
+    if (!Array.isArray(snapshot) || snapshot.length !== 9){
+        return{
+            ok: false,
+            reason: "Board must be an array of length 9"
+        }
+    }
 
-    //Check rows for same value
+    for (const cell of snapshot){
+        if(cell !== null && cell !=="X" && cell !== "O"){
+            return {
+                ok: false,
+                reason: "Board contains invalid cell values"
+            }
+        }
+    }
+
+
+    //We're going to check if each row has the same value
     const rows = [
         [0, 1, 2],
         [3, 4, 5],
         [6, 7, 8],
     ];
 
-    function checkRows (snapshot) {
-        for (const[a,b,c] of rows){
+     //check if each COLUMN has the same value
+    const columns = [
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+    ];
+
+     //check if each DIAGONAL has the same value
+     const diagonals = [
+        [0, 4, 8],
+        [2, 4, 6],
+    ];
+    
+    //Using destructuring to check each row
+    function checkLines (snapshot, lines) {
+        for (const[a,b,c] of lines){
             const valueOfA = snapshot[a];
             const valueOfB = snapshot[b];
             const valueOfC = snapshot[c];
-
+            
             if (valueOfA !== null && valueOfA === valueOfB && valueOfB === valueOfC){
                 return{
                     ok: true,
@@ -166,28 +198,42 @@ function gameResult(snapshot){
                     line: [a , b, c]
                 };
             }
-            return{
-                ok: false;
-            }
+        }
+        return {
+                ok: false
+            };
+    }
+
+    //use the spread operator to combine them
+    const allCombos = [...rows, ...columns, ...diagonals];
+
+    //checking for a winner
+    const winResult = checkLines(snapshot, allCombos);
+    if(winResult.ok){
+        return {
+            ok: true,
+            status: "win",
+            winner: winResult.winner,
+            line: winResult.line
+        };
+    }
+
+    //checking if it is a draw if no winner.
+    const isFull= snapshot.every( cell => {
+        return cell !== null;
+    });
+    if(isFull){
+        return{
+            ok: true,
+            status: "draw"
         }
     }
 
-    //Check columns for the same value
-    //if column 1 shows 'X' in each cell, 'X' wins. Otherwise check column 2 then check column 3
-    // Do the same for 'O'
-
-
-    //Check Diagonals
-    // if snapshot[0], snapshot[4], snapshot[8] all have X or all have O, call the winner
-    //if snapshot[2], snapshot[4], snapshot[6] all have X or all have O, call the winner
-
-    //Check if it is a draw
-    //if each cell is occupied, that is if each cell is not null, and rows, columns, and diagonals yield no results then it's a draw
+    return {
+        ok: true,
+        status: "ongoing"
+    };
 }
-
-
-
-
 
 
 
@@ -197,10 +243,9 @@ function gameResult(snapshot){
 function playGame(){
     
     //1. prompt for users name
-    const player = () => {
-        const playerName = prompt("what is your name?");
-        return createUser(playerName);
-    }
+    const playerName = prompt("what is your name?");
+    const player = createUser(playerName);
+
     console.log(player.getName());
     console.log(player.getMark());
 
@@ -209,18 +254,10 @@ function playGame(){
 
     
     // Ask for position based on board
-    let playerPosition = () => {
+    let positionInput = () => {
         return prompt("Have a look at the board, where would like to play?")
     }
 
-
+    const playerPosition = initiateGameBoard.placeMark(positionInput);
     
-
-
-
-
- 
-    //3. prompt for where the user would like to play 
-    // (i need to show the user the empty slots but i don't know how to do that is intuitieve to the user)
-    //4. once position is given, call placeMark function
 }
