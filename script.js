@@ -236,6 +236,35 @@ function gameResult(snapshot){
 }
 
 
+function getIndexNumFromUser(){
+    // Ask for position based on board
+    const baseMessage = "Have a look at the board, where would like to play?";
+    let message = baseMessage;
+
+    while (true){
+        const userInput = prompt(message);
+        
+        //check if the user clicked cancel
+        if (userInput === null){
+            return null;
+        }
+
+        //if the user enters something
+        const trimmedInput = userInput.trim();
+        const inputBtwn1To9 = /^[1-9]$/.test(trimmedInput);
+        if (!inputBtwn1To9){
+           message = `Input not valid. ${baseMessage}`
+           continue;
+        }
+
+        //change input to base 10
+        const base10 = Number.parseInt(inputBtwn1To9, 10);
+        const index = base10 -1;
+
+        return index;
+    }
+    
+}
 
 
 
@@ -252,12 +281,12 @@ function playGame(){
     //Show Board
     boardMap();
 
-    
-    // Ask for position based on board
-    let positionInput = () => {
-        return prompt("Have a look at the board, where would like to play?")
+    const userIndex = getIndexNumFromUser();
+    if (userIndex === null){
+        console.log("Input position cancelled");
+        return;
     }
 
-    const playerPosition = initiateGameBoard.placeMark(positionInput);
+    initiateGameBoard.placeMark(userIndex);
     
 }
