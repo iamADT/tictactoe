@@ -249,8 +249,10 @@ function getIndexNumFromUser(){
             return null;
         }
 
-        //if the user enters something
+        //if the user enters something, trim the input
         const trimmedInput = userInput.trim();
+
+        //After trimming, check if it is between 1-9. inputBtwn1To9 is a boolean (true or false).
         const inputBtwn1To9 = /^[1-9]$/.test(trimmedInput);
         if (!inputBtwn1To9){
            message = `Input not valid. ${baseMessage}`
@@ -258,15 +260,13 @@ function getIndexNumFromUser(){
         }
 
         //change input to base 10
-        const base10 = Number.parseInt(inputBtwn1To9, 10);
+        const base10 = Number.parseInt(trimmedInput, 10);
         const index = base10 -1;
 
         return index;
     }
     
 }
-
-
 
 
 function playGame(){
