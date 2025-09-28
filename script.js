@@ -238,7 +238,7 @@ function gameResult(snapshot){
 
 function getIndexNumFromUser(){
     // Ask for position based on board
-    const baseMessage = "Have a look at the board, where would like to play?";
+    const baseMessage = "Have a look at the board, Enter a number from 1 to 9";
     let message = baseMessage;
 
     while (true){
@@ -269,6 +269,61 @@ function getIndexNumFromUser(){
 }
 
 
+function computersTurn(){
+    const currentBoard = initiateGameBoard.getBoardSnapshot();
+    
+
+    // look at this snpashot array and figure out wthe index of the ones that are null
+    const allowed =[];
+    for(let i = 0; i < currentBoard.length; i++){
+        if(currentBoard[i] === null){
+            allowed.push(i);
+        }
+    }
+    
+    if (allowed.length === 0){
+        return null;
+    }
+
+    const computersPick = Math.floor(Math.random() * allowed.length);
+    const computersChoice = allowed[computersPick];
+    return computersChoice;
+
+}
+
+
+function gameLoop(){
+
+    let result = gameResult(initiateGameBoard.getBoardSnapshot());
+
+    While (result.ok && result.status === "ongoing"){
+        boardMap();
+        
+        const userIndex = getIndexNumFromUser();
+        if (userIndex === null){
+        console.log("Input position cancelled");
+        break;
+         }
+
+        initiateGameBoard.placeMark(userIndex);
+        result = gameResult(initiateGameBoard.getBoardSnapshot());
+        if(!result.ok || result.status !== "ongoing"){
+            break;
+        }
+
+        const computersChoice = computersTurn();
+        initiateGameBoard.placeMark(computersChoice);
+        if(!result.ok || result.status !== "ongoing"){
+            break;
+        }
+        
+        result = gameResult(initiateGameBoard.getBoardSnapshot());
+    }
+
+    return result;
+}
+
+
 function playGame(){
     
     //1. prompt for users name
@@ -281,12 +336,6 @@ function playGame(){
     //Show Board
     boardMap();
 
-    const userIndex = getIndexNumFromUser();
-    if (userIndex === null){
-        console.log("Input position cancelled");
-        return;
-    }
-
-    initiateGameBoard.placeMark(userIndex);
+    
     
 }
