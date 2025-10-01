@@ -273,7 +273,7 @@ function computersTurn(){
     const currentBoard = initiateGameBoard.getBoardSnapshot();
     
 
-    // look at this snpashot array and figure out wthe index of the ones that are null
+    // look at this snpashot array and figure out the index of the ones that are null
     const allowed =[];
     for(let i = 0; i < currentBoard.length; i++){
         if(currentBoard[i] === null){
@@ -292,32 +292,52 @@ function computersTurn(){
 }
 
 
-function gameLoop(){
+function gameLoop(HUMAN, CPU){
 
     let result = gameResult(initiateGameBoard.getBoardSnapshot());
 
-    While (result.ok && result.status === "ongoing"){
-        boardMap();
+    while (result.ok && result.status === "ongoing"){
+        showBoardToUser(initiateGameBoard.getBoardSnapshot())
         
-        const userIndex = getIndexNumFromUser();
-        if (userIndex === null){
+        //Human input
+        const usersChoice = getIndexNumFromUser();
+        if (usersChoice === null){
         console.log("Input position cancelled");
+        result = {
+            ok: true,
+            status: "canclled"
+        };
         break;
          }
+        
+        //Human Move
+        const humanMove = initiateGameBoard.placeMark(usersChoice, HUMAN);
+        if (!humanMove.ok){
+            console.log(humanMove.reason)
+            continue;
+        }
 
-        initiateGameBoard.placeMark(userIndex);
         result = gameResult(initiateGameBoard.getBoardSnapshot());
         if(!result.ok || result.status !== "ongoing"){
             break;
         }
 
+        //Computer's Input
         const computersChoice = computersTurn();
-        initiateGameBoard.placeMark(computersChoice);
-        if(!result.ok || result.status !== "ongoing"){
+        if (computersChoice === null){
+            result = gameResult(initiateGameBoard.getBoardSnapshot());
             break;
+        }
+
+        //Computer's Move
+        const computersMove = initiateGameBoard.placeMark(computersChoice, CPU)
+        if (!computersMove.ok){
+            console.log(`Computer's move is invalid: ${computersMove.reason}`);
+            continue;
         }
         
         result = gameResult(initiateGameBoard.getBoardSnapshot());
+        //while loop continues
     }
 
     return result;
@@ -330,12 +350,33 @@ function playGame(){
     const playerName = prompt("what is your name?");
     const player = createUser(playerName);
 
-    console.log(player.getName());
-    console.log(player.getMark());
+    const HUMAN = player.getMark();
+    const CPU = "O";
 
-    //Show Board
-    boardMap();
+    console.log(`Welcome ${player.getName()} to a new game of Tic Tac Toe. You are ${HUMAN}. Computer is ${CPU}.`);
 
+    //Show empty board to the user
+    showBoardToUser(initiateGameBoard.getBoardSnapshot());
     
+    //reun the game
+    const result = gameLoop(HUMAN, CPU);
+
+    showBoardToUser(initiateGameBoard.getBoardSnapshot());
+
+    if(!result || !result.ok){
+        console.log(`Game ended unexpectedly`);
+        return;
+    }
+
+    if(result.status === "win"){
+        const winningPlayer = result.winner === HUMAN ? player.getName() : "Computer";
+        console.log(`Game over. ${winningPlayer} wins with ${result.winner}. `)
+    }
+    else if (result.status === "draw") {
+        console.log(`Game over. It's a draw.`);
+    }
+    else {
+        console.log(`Game ended before completion`);
+    }
     
 }
