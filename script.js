@@ -1,5 +1,5 @@
 function createUser(name){
-    const userName = String(name).trim();
+    const userName = String(name ?? "").trim() || "Player";
     const markType = "X";
 
     return {
@@ -274,21 +274,13 @@ function computersTurn(){
     
 
     // look at this snpashot array and figure out the index of the ones that are null
-    const allowed =[];
-    for(let i = 0; i < currentBoard.length; i++){
-        if(currentBoard[i] === null){
-            allowed.push(i);
-        }
-    }
-    
+    const allowed = initiateGameBoard.getEmptyCells();
     if (allowed.length === 0){
         return null;
     }
 
     const computersPick = Math.floor(Math.random() * allowed.length);
-    const computersChoice = allowed[computersPick];
-    return computersChoice;
-
+    return allowed[computersPick];
 }
 
 
@@ -305,7 +297,7 @@ function gameLoop(HUMAN, CPU){
         console.log("Input position cancelled");
         result = {
             ok: true,
-            status: "canclled"
+            status: "cancelled"
         };
         break;
          }
