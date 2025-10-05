@@ -8,7 +8,7 @@ function createUser(name){
     }
 }
 
-const initiateGameBoard = (() => {
+const gameBoard = (() => {
     const boardSize = 9;
     const cells = Array(boardSize).fill(null);
     
@@ -95,7 +95,7 @@ function boardMap() {
 
 
 // Show how the board looks with values in them. 
-// 'snapshot' is the snapshot array value from initiateGameBoard
+// 'snapshot' is the snapshot array value from gameBoard
 function showBoardToUser(snapshot){
     
     // Get the value of each cell on the board.
@@ -270,11 +270,11 @@ function getIndexNumFromUser(){
 
 
 function computersTurn(){
-    const currentBoard = initiateGameBoard.getBoardSnapshot();
+    const currentBoard = gameBoard.getBoardSnapshot();
     
 
     // look at this snpashot array and figure out the index of the ones that are null
-    const allowed = initiateGameBoard.getEmptyCells();
+    const allowed = gameBoard.getEmptyCells();
     if (allowed.length === 0){
         return null;
     }
@@ -286,10 +286,10 @@ function computersTurn(){
 
 function gameLoop(HUMAN, CPU){
 
-    let result = gameResult(initiateGameBoard.getBoardSnapshot());
+    let result = gameResult(gameBoard.getBoardSnapshot());
 
     while (result.ok && result.status === "ongoing"){
-        showBoardToUser(initiateGameBoard.getBoardSnapshot())
+        showBoardToUser(gameBoard.getBoardSnapshot())
         
         //Human input
         const usersChoice = getIndexNumFromUser();
@@ -303,13 +303,13 @@ function gameLoop(HUMAN, CPU){
          }
         
         //Human Move
-        const humanMove = initiateGameBoard.placeMark(usersChoice, HUMAN);
+        const humanMove = gameBoard.placeMark(usersChoice, HUMAN);
         if (!humanMove.ok){
             console.log(humanMove.reason)
             continue;
         }
 
-        result = gameResult(initiateGameBoard.getBoardSnapshot());
+        result = gameResult(gameBoard.getBoardSnapshot());
         if(!result.ok || result.status !== "ongoing"){
             break;
         }
@@ -317,18 +317,18 @@ function gameLoop(HUMAN, CPU){
         //Computer's Input
         const computersChoice = computersTurn();
         if (computersChoice === null){
-            result = gameResult(initiateGameBoard.getBoardSnapshot());
+            result = gameResult(gameBoard.getBoardSnapshot());
             break;
         }
 
         //Computer's Move
-        const computersMove = initiateGameBoard.placeMark(computersChoice, CPU)
+        const computersMove = gameBoard.placeMark(computersChoice, CPU)
         if (!computersMove.ok){
             console.log(`Computer's move is invalid: ${computersMove.reason}`);
             continue;
         }
         
-        result = gameResult(initiateGameBoard.getBoardSnapshot());
+        result = gameResult(gameBoard.getBoardSnapshot());
         //while loop continues
     }
 
@@ -348,12 +348,12 @@ function playGame(){
     console.log(`Welcome ${player.getName()} to a new game of Tic Tac Toe. You are ${HUMAN}. Computer is ${CPU}.`);
 
     //Show empty board to the user
-    showBoardToUser(initiateGameBoard.getBoardSnapshot());
+    showBoardToUser(gameBoard.getBoardSnapshot());
     
     //reun the game
     const result = gameLoop(HUMAN, CPU);
 
-    showBoardToUser(initiateGameBoard.getBoardSnapshot());
+    showBoardToUser(gameBoard.getBoardSnapshot());
 
     if(!result || !result.ok){
         console.log(`Game ended unexpectedly`);
