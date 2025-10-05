@@ -293,6 +293,7 @@ function gameLoop(HUMAN, CPU){
         
         //Human input
         const usersChoice = getIndexNumFromUser();
+        console.log(`You entered 'X' in position ${usersChoice + 1}`)
         if (usersChoice === null){
         console.log("Input position cancelled");
         result = {
@@ -346,11 +347,8 @@ function playGame(){
     const CPU = "O";
 
     console.log(`Welcome ${player.getName()} to a new game of Tic Tac Toe. You are ${HUMAN}. Computer is ${CPU}.`);
-
-    //Show empty board to the user
-    showBoardToUser(gameBoard.getBoardSnapshot());
     
-    //reun the game
+    //run the game
     const result = gameLoop(HUMAN, CPU);
 
     showBoardToUser(gameBoard.getBoardSnapshot());
