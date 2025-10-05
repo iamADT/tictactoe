@@ -3,10 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <script src="script.js"></script>
+    <title>Tic Tac Toe</title>
+    <script src="script.js" defer></script>
 </head>
 <body>
-    
+    <!-- Create the heading of the site and the subheading of the site -->
+     <header>
+        <h1> Tic Tac Toe</h1>
+        <p class="tagline"> To begin, please enter your name below</p>
+     </header>
+     <main>
+        <!-- User enters their name and gets information -->
+        <section aria-labelledby="initiation-title">
+            <h2 id="initiation-title">Initiation</h2>
+            <form id="player-form" autocomplete="off">
+                <div class="field">
+                    <label for="player-name">First Name</label>
+                    <input type="text" name="playeName" id="player-name" required />
+                </div>
+                <div class="actions">
+                    <button id="start-btn" type="submit">Start game</button>
+                    <button id="reset-btn" type="button">reset board</button>
+                </div>
+            </form>
+        </section>
+        
+     </section>
+     <section>
+        <div class="board-container">
+            <div class="row-1">
+                <div>
+                    <p></p>
+                </div>
+                <div>
+                    <p></p>
+                </div>
+                <div>
+                    <p></p>
+                </div>
+            </div>
+            <div class="row-2">
+                <div>
+                    <p></p>
+                </div>
+                <div>
+                    <p></p>
+                </div>
+                <div>
+                    <p></p>
+                </div>
+            </div>
+            <div class="row-3">
+                <div>
+                    <p></p>
+                </div>
+                <div>
+                    <p></p>
+                </div>
+                <div>
+                    <p></p>
+                </div>
+            </div>
+        </div>
+    </main>
+     <footer>
+        <p>Tic Tac Toe created by TA</p>
+     </footer>
 </body>
 </html>
