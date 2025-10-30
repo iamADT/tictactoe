@@ -1,3 +1,7 @@
+//Load the visual board
+document.addEventListener("DOMContentLoaded", renderVisualBoard);
+
+//Functions
 function createUser(name){
     const userName = String(name ?? "").trim() || "Player";
     const markType = "X";
@@ -96,7 +100,7 @@ function boardMap() {
 
 // Show how the board looks with values in them. 
 // 'snapshot' is the snapshot array value from gameBoard
-function showBoardToUser(snapshot){
+function showBoardToUserInConsole(snapshot){
     
     // Get the value of each cell on the board.
     //Even though indexes start at 0, adding 1 for the user's sake
@@ -140,6 +144,45 @@ console.log("---+---+---");
 console.log(eachRow(1));
 console.log("---+---+---");
 console.log(eachRow(2));
+
+}
+
+//How the user sees the board
+function renderVisualBoard(){
+    const buttons = document.querySelectorAll(".cell");
+    const snapshot = gameBoard.getBoardSnapshot();
+    const statusElement = document.querySelector("#status");
+    const result = gameResult(snapshot);
+
+    //Go through gameBoard snapshot array one by one. If there's a value at the index, Place that value visually on the button.
+    buttons.forEach((btn, i) => {
+        const cellValue = snapshot[i];
+        btn.textContent = (cellValue === "X" || cellValue === "O") ? cellValue: "";
+        btn.setAttribute("aria-label", `Cell ${(i + 1)}, ${cellValue ? cellValue: ""}`);
+    })
+
+    //We want a way to visually show the winning path. This needs to be done in tandem with CSS (.highlight class created).
+    buttons.forEach(btn => btn.classList.remove("highlight"));
+
+    if(!result.ok){
+         statusElement.textContent = `Invalid board state.`;
+         return;
+    }
+    else if (result.status === "win"){
+        //Highlight the row
+        const [a, b, c] = result.line;
+        buttons[a].classList.add("highlight");
+        buttons[b].classList.add("highlight");
+        buttons[c].classList.add("highlight");
+        
+        statusElement.textContent = `Game over. ${result.winner} wins the game`
+    }
+    else if (result.status === "draw"){
+        statusElement.textContent = `Game over. It's a draw!`
+    }
+    else {
+        statusElement.textContent = `No game result yet. Keep playing`
+    }
 
 }
 
@@ -289,7 +332,7 @@ function gameLoop(HUMAN, CPU){
     let result = gameResult(gameBoard.getBoardSnapshot());
 
     while (result.ok && result.status === "ongoing"){
-        showBoardToUser(gameBoard.getBoardSnapshot())
+        showBoardToUserInConsole(gameBoard.getBoardSnapshot())
         
         //Human input
         const usersChoice = getIndexNumFromUser();
@@ -351,7 +394,7 @@ function playGame(){
     //run the game
     const result = gameLoop(HUMAN, CPU);
 
-    showBoardToUser(gameBoard.getBoardSnapshot());
+    showBoardToUserInConsole(gameBoard.getBoardSnapshot());
 
     if(!result || !result.ok){
         console.log(`Game ended unexpectedly`);

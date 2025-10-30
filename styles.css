@@ -29,7 +29,7 @@ body{
     /* background-color: #071c16; */
 }
 
-header, .initiation, footer {
+header, .initiation, footer, .game-status {
     width: fit-content;
     margin: 0 auto;
     text-align: center;
@@ -103,6 +103,10 @@ input[type="text"]{
     gap: var(--space-1);
 }
 
+.visually-hidden{
+    display: none;
+}
+
 .cell{
     cursor: pointer;
     display: grid;
@@ -111,4 +115,13 @@ input[type="text"]{
     font-size: 2rem;
     font-weight: 600;
     user-select: none;
+}
+
+.game-status{
+    margin-bottom: 100px;
+}
+
+.highlight {
+    background-color: #b8860b;
+    font-weight: 800;
 }
